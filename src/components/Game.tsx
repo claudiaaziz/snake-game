@@ -6,6 +6,9 @@ import { useEffect, useState } from 'react';
 import Snake from './Snake';
 import { Dimensions } from 'react-native';
 import { checkGameOver } from '../utils/checkGameOver';
+import Food from './Food';
+import { checkAteFood } from '../utils/checkAteFood';
+import { getRandomFoodPos } from '../utils/getRandomFoodPos';
 
 const SNAKE_INITIAL_POS = [{ x: 5, y: 5 }];
 const FOOD_INITIAL_POS = { x: 5, y: 20 };
@@ -81,7 +84,13 @@ export default function Game(): JSX.Element {
 				break;
 		}
 
-		setSnake([newSnakeHead, ...snake.slice(0, -1)]);
+		if (checkAteFood(newSnakeHead, food, 2)) {
+			setFood(getRandomFoodPos(GAME_BOUNDS.xMax, GAME_BOUNDS.yMax));
+			setSnake([newSnakeHead, ...snake]);
+			setScore(score + SCORE_INCREMENT);
+		} else {
+			setSnake([newSnakeHead, ...snake.slice(0, -1)]);
+		}
 	};
 
 	return (
@@ -89,6 +98,7 @@ export default function Game(): JSX.Element {
 			<SafeAreaView style={styles.container}>
 				<View style={styles.boundaries}>
 					<Snake snake={snake} />
+					<Food x={food.x} y={food.y} />
 				</View>
 			</SafeAreaView>
 		</PanGestureHandler>
