@@ -9,6 +9,7 @@ import { checkGameOver } from '../utils/checkGameOver';
 import Food from './Food';
 import { checkAteFood } from '../utils/checkAteFood';
 import { getRandomFoodPos } from '../utils/getRandomFoodPos';
+import Header from './Header';
 
 const SNAKE_INITIAL_POS = [{ x: 5, y: 5 }];
 const FOOD_INITIAL_POS = { x: 5, y: 20 };
@@ -93,9 +94,27 @@ export default function Game(): JSX.Element {
 		}
 	};
 
+	const pauseGame = () => setIsPaused((prev) => !prev);
+
+	const reloadGame = () => {
+		setDirection(Direction.Right);
+		setIsPaused(false);
+		setIsGameOver(false);
+		setScore(0);
+		setFood(FOOD_INITIAL_POS);
+		setSnake(SNAKE_INITIAL_POS);
+	};
+
 	return (
 		<PanGestureHandler onGestureEvent={handleGesture}>
 			<SafeAreaView style={styles.container}>
+				<Header
+					isPaused={isPaused}
+					pauseGame={pauseGame}
+					reloadGame={reloadGame}
+				>
+					<Text style={styles.score}>{score}</Text>
+				</Header>
 				<View style={styles.boundaries}>
 					<Snake snake={snake} />
 					<Food x={food.x} y={food.y} />
@@ -117,5 +136,10 @@ const styles = StyleSheet.create({
 		borderWidth: 12,
 		borderBottomLeftRadius: 20,
 		borderBottomRightRadius: 20,
+	},
+	score: {
+		fontSize: 22,
+		fontWeight: 'bold',
+		color: Colors.primary,
 	},
 });
